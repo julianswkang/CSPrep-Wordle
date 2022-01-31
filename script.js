@@ -1,7 +1,5 @@
 // haven't split the characters into correct letter, but at wrong index, and correct letters... They are all going into one storage.
 
-// Need to address upper/lowercase from input (convert everything to one case?)
-
 // haven't got rid of duplicates will get logged to wrong letter
 
 // we get try again when we input 'earth' on the third try.
@@ -52,34 +50,52 @@ const game = {
     4: ''
   },
 
+  status: 'in progress',
+
   messages: {
     win: () => {
-      alert('you win');
-      setTimeout(user.displayUserData, 1000);
+      alert(`You got it, the word was ${Object.values(game.masterWord).join('')}!`);
+      game.displayUserData();
     },
     lose: () => {
-       // alert(`You lost! Correct word is ${JSON.stringify(Object.values((game.masterWordString)))}`);
       alert(`You lost! Correct word is: ${Object.values(game.masterWord).join('')}`)
-      setTimeout(user.displayUserData, 1000);
+      game.displayUserData();
+    },
+    currentGuessMessage: () => {
+      return `Attempt ${user.attemptCounter}/6 | \n
+      Guess: ${user.currentGuess} | \n
+      Correct letters: ${Object.values(user.accumulatedGuess).join(' ')} | \n
+      In word, but wrong spot: [ ${user.letterData.inAnswerWrongIndex.join(' ')} ] | \n
+      Not in word: [ ${user.letterData.notInAnswer.join(' ')} ]\n`
     }
   },
 
   /* FUNCTIONALITY */
-  startGame: function () {
-    game.reset();
-    game.selectMasterWord();
-    while (user.attemptCounter < 6) {
+  startGame: function() {
+    if (user.attemptCounter === 0) game.selectMasterWord(); // game just started
+
+    if (user.attemptCounter < 6) { // game is in progress
+      game.resetLetterData();
       user.attemptCounter++;
-      game.getInput()
-      game.updateUser()
-      if (game.checkGuess() === true) {
-        game.messages.win(); 
-        return;
-      };
-      game.displayUserData();
+      setTimeout(game.getInput(), 1000*user.attemptCounter);
+      game.updateUser();
     }
-    game.messages.lose(); 
-    return;
+
+    if (game.checkGuess() === true) { // did you get it right
+      game.status = 'end';
+      game.messages.win();
+      game.reset(); 
+      return;
+    };
+    
+
+    if (user.attemptCounter >= 6 && game.status !== 'win') { // you lost
+      game.status = 'end';
+      game.messages.lose();
+      game.reset();
+    }
+
+    else return game.displayUserData();
   },
  
   selectMasterWord: function () {
@@ -90,19 +106,8 @@ const game = {
   },
 
   getInput: function() {
-    if (user.attemptCounter > 1) {
-      let input = window.prompt(`Correct letters at the right spot : ${JSON.stringify((Object.values(user.accumulatedGuess)))}
-      \n Correct letter, wrong place : ${JSON.stringify(user.letterData.inAnswerWrongIndex)}
-      \n Not in master word : ${JSON.stringify(user.letterData.notInAnswer)}
-      \n Previous Guesses : ${JSON.stringify(user.previousGuesses)}
-      \n ${JSON.stringify(user.attemptCounter)} out of 6
-      `).toLowerCase();
-      user.currentGuess = input;
-    }
-    else{
-      let input = window.prompt('Please enter a five letter word').toLowerCase();
-      user.currentGuess = input;
-    }
+    let input = window.prompt('Please enter a five letter word').toLowerCase();
+    user.currentGuess = input;
   },
 
   updateUser: function() {
@@ -111,35 +116,38 @@ const game = {
       let char = guess[i]; 
       if (game.masterWord[i] === char) user.accumulatedGuess[i] = char;
       else
-        if (Object.values(game.masterWord).includes(char)) {
-          if (!user.letterData.inAnswerWrongIndex.includes(char)) user.letterData.inAnswerWrongIndex.push(char);
-        }
-
+        if (Object.values(game.masterWord).includes(char) && !user.letterData.inAnswerWrongIndex.includes(char)) user.letterData.inAnswerWrongIndex.push(char)
         else 
           if (!user.letterData.notInAnswer.includes(char)) user.letterData.notInAnswer.push(char);
     }
-    user.previousGuesses.push(guess)
   },
 
-  displayUserData: function () {
-    alert(`Correct letters at the right spot : ${JSON.stringify((Object.values(user.accumulatedGuess)))}
-    \n Correct letter, wrong place : ${JSON.stringify(user.letterData.inAnswerWrongIndex)}
-    \n Not in master word : ${JSON.stringify(user.letterData.notInAnswer)}
-    \n Previous Guesses : ${JSON.stringify(user.previousGuesses)}
-    \n ${JSON.stringify(user.attemptCounter)} out of 6`)
+  displayUserData: function() {
+    user.previousGuesses.push(game.messages.currentGuessMessage());
+    let newTextLine = document.createElement('div');
+    newTextLine.setAttribute('id', 'message');
+    let newMessage = game.messages.currentGuessMessage();
+    newTextLine.textContent = `${newMessage}`;
+    messageBox.appendChild(newTextLine);
   },
   
+  resetLetterData: function() {
+    for (let key in user.accumulatedGuess) user.accumulatedGuess[key] = '_';
+    user.letterData.inAnswerWrongIndex = [];
+  },
+
   reset: function() {
     user.currentGuess = '';
-    for (let key in user.accumulatedGuess) {
-      user.accumulatedGuess[key] = '_ ';
-    } 
+    for (let key in user.accumulatedGuess) user.accumulatedGuess[key] = '_';
     user.letterData = {
     inAnswerWrongIndex:[],
     notInAnswer: []
     };
+    game.status = 'in progress'
     user.attemptCounter = 0;
     user.previousGuesses = [];
+    let allMessages = messageBox.children;
+    allMessages.forEach(child => child.remove());
   },
 
   checkGuess: function() {
@@ -150,6 +158,8 @@ const game = {
 
 const startBtn = document.querySelector('button');
 startBtn.addEventListener('click', () => game.startGame());
+
+const messageBox = document.querySelector('#console');
 
 // GAME FLOW
   // start game
