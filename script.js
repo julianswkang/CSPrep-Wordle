@@ -50,6 +50,8 @@ const game = {
     4: ''
   },
 
+  masterWordString: '',
+
   status: 'in progress',
 
   messages: {
@@ -99,16 +101,14 @@ const game = {
   },
  
   selectMasterWord: function () {
-    let masterWordString = game.listOfWords[Math.floor(Math.random() * game.listOfWords.length)]
+    let masterWordString = game.listOfWords[Math.floor(Math.random() * game.listOfWords.length)];
+    game.masterWordString = masterWordString;
     for (let i = 0; i < masterWordString.length; i++) {
       game.masterWord[i] = masterWordString[i];
     }
   },
 
-  getInput: function() {
-    let input = window.prompt('Please enter a five letter word').toLowerCase();
-    user.currentGuess = input;
-  },
+  getInput: function() {user.currentGuess = window.prompt('Please enter a five letter word').toLowerCase()},
 
   updateUser: function() {
     let guess = user.currentGuess;
@@ -146,8 +146,12 @@ const game = {
     game.status = 'in progress'
     user.attemptCounter = 0;
     user.previousGuesses = [];
-    let allMessages = messageBox.children;
-    allMessages.forEach(child => child.remove());
+    game.masterWordString = '';
+    let allMessages = Array.from(document.querySelectorAll('#message'));
+    console.log(allMessages);
+    for (let msg of allMessages) {
+      msg.parentNode.removeChild(msg);
+    }
   },
 
   checkGuess: function() {
@@ -160,23 +164,3 @@ const startBtn = document.querySelector('button');
 startBtn.addEventListener('click', () => game.startGame());
 
 const messageBox = document.querySelector('#console');
-
-// GAME FLOW
-  // start game
-  // choose a master word
-  // get input from user
-    // user inputs a string
-  // check/evaluate input
-  // return data based on evaluated input
-  // display game status
-    // check game status
-    // if correct
-      // display win stuff
-      // reset all
-    // if incorrect, 
-      // attempts < 6
-        // display in progress stuff
-        // get input again
-      // attempts === 6
-        // display loss stuff
-        // reset all
