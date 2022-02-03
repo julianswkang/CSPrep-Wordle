@@ -1,23 +1,60 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>replit</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Wordle Clone</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <div id='console'></div>
-    <div class='container'>
-      <h2>Rules:</h2>
-      <div id='rules'>
-        <ul>
-          <li>Guess the WORDLE in 6 tries.</li>
-          <li>Each guess must be a valid 5 letter word. Hit the enter button to submit.</li>
-        </ul> 
-      </div>
-      <button id='start'>Guess a word</button>
+    <div id="navbar">
+      <h1>W O R D L E C L O N E</h1>
     </div>
+    <div id="board">
+      <div id="row1" class="active row">
+        <div class="active tile" id="11"></div>
+        <div class="tile" id="12"></div>
+        <div class="tile" id="13"></div>
+        <div class="tile" id="14"></div>
+        <div class="tile" id="15"></div>
+      </div>
+      <div id="row2" class="row">
+        <div class="tile" id="21"></div>
+        <div class="tile" id="22"></div>
+        <div class="tile" id="23"></div>
+        <div class="tile" id="24"></div>
+        <div class="tile" id="25"></div>
+      </div>
+      <div id="row3" class="row">
+        <div class="tile" id="31"></div>
+        <div class="tile" id="32"></div>
+        <div class="tile" id="33"></div>
+        <div class="tile" id="34"></div>
+        <div class="tile" id="35"></div>
+      </div>
+      <div id="row4" class="row">
+        <div class="tile" id="41"></div>
+        <div class="tile" id="42"></div>
+        <div class="tile" id="43"></div>
+        <div class="tile" id="44"></div>
+        <div class="tile" id="45"></div>
+      </div>
+      <div id="row5" class="row">
+        <div class="tile" id="51"></div>
+        <div class="tile" id="52"></div>
+        <div class="tile" id="53"></div>
+        <div class="tile" id="54"></div>
+        <div class="tile" id="55"></div>
+      </div>
+      <div id="row6" class="row">
+        <div class="tile" id="61"></div>
+        <div class="tile" id="62"></div>
+        <div class="tile" id="63"></div>
+        <div class="tile" id="64"></div>
+        <div class="tile" id="65"></div>
+      </div>
+    </div>
+    <div id="console"></div>
     <script src="script.js"></script>
   </body>
 </html>
